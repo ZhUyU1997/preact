@@ -34,15 +34,7 @@ export function diffProps(dom, newProps, oldProps, isSvg, hydrate) {
 }
 
 function setStyle(style, key, value) {
-	if (key[0] === '-') {
-		style.setProperty(key, value);
-	} else if (value == null) {
-		style[key] = '';
-	} else if (typeof value != 'number' || IS_NON_DIMENSIONAL.test(key)) {
-		style[key] = value;
-	} else {
-		style[key] = value + 'px';
-	}
+	style[key] = value;
 }
 
 /**
@@ -67,7 +59,7 @@ export function setProperty(dom, name, value, oldValue, isSvg) {
 			if (oldValue) {
 				for (name in oldValue) {
 					if (!(value && name in value)) {
-						setStyle(dom.style, name, '');
+						setStyle(dom.style, name, null);
 					}
 				}
 			}
@@ -85,9 +77,8 @@ export function setProperty(dom, name, value, oldValue, isSvg) {
 	else if (name[0] === 'o' && name[1] === 'n') {
 		useCapture = name !== (name = name.replace(/Capture$/, ''));
 
-		// Infer correct casing for DOM built-in events:
-		if (name.toLowerCase() in dom) name = name.toLowerCase().slice(2);
-		else name = name.slice(2);
+		// Always lower casing for MEUI
+		name = name.toLowerCase().slice(2);
 
 		if (!dom._listeners) dom._listeners = {};
 		dom._listeners[name + useCapture] = value;
